@@ -1,0 +1,15 @@
+How the Flow Works in this Structure
+By organizing your project this way, you create a clear pipeline from data discovery to deployment:
+
+1. Discovery Phase (notebooks/)
+You start in 01_eda_and_feature_engineering.ipynb to experiment with the pandas merging, AST literal evaluation, and space-removal logic we discussed previously. Once the logic works perfectly, you move it out of the notebook.
+
+2. Engineering Phase (src/ and scripts/)
+You take the successful code from your notebook and modularize it into functions inside src/preprocess.py.
+Then, you run scripts/01_run_preprocessing.py to read from data/raw/, apply the cleaning functions, and save the result to data/processed/tmdb_processed.csv.
+
+3. Embedding & Ingestion Phase (scripts/)
+You run scripts/02_ingest_vectors.py. This script reads the clean tmdb_processed.csv, uses the model (stored in or loaded via the models/ directory) to generate the 384-dimensional vectors, and inserts them directly into your MySQL server.
+
+4. Deployment Phase (backend/ and frontend/)
+Your FastAPI server (backend/main.py) loads the same model from the models/ directory. It listens for user requests from the Streamlit UI (frontend/app.py), vectorizes the search term, queries MySQL, and returns the results.

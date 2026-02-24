@@ -1,0 +1,35 @@
+# 1. Environment Variables & Secrets
+# NEVER push your database passwords or API keys to GitHub!
+.env
+.env.*
+
+# 2. Data Files
+# Git is not meant for storing large datasets. 
+data/raw/
+data/processed/
+*.csv
+*.parquet
+*.json
+
+# 3. Machine Learning Models
+# HuggingFace/SentenceTransformer weights are too heavy for Git.
+models/
+*.bin
+*.pt
+*.h5
+*.pkl
+*.joblib
+
+# 4. Python & Virtual Environment
+# Ignores the folder containing your local Python installation and installed libraries.
+venv/
+env/
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# 5. OS Generated Files
+# Ignores hidden files created by Windows or Mac.
+.DS_Store
+Thumbs.db

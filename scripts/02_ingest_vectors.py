@@ -1,95 +1,72 @@
+import psycopg2
 import os
-import sys
-from backend.
-
-# 1. Get the directory of the current script (scripts/)
-current_script_dir = os.path.dirname(os.path.abspath(__file__))
-
-# 2. Get the parent directory (the Project Root)
-project_root = os.path.dirname(current_script_dir)
-
-# 3. Add the project root to sys.path so Python can see 'src'
-if project_root not in sys.path:
-    sys.path.append(project_root)
-
-
-import pandas as pd
 import json
 from dotenv import load_dotenv
+from src.logger import get_logger
 from backend.database import get_db_connection
 
-# Logger import (from src/__init__.py)
-from src import get_logger
+load_dotenv()
 logger = get_logger(__name__)
 
-load_dotenv()  # This looks for a .env file and loads the variables
-
-from src.embedder import MovieEmbedder
-embeder = MovieEmbedder()
 
 
-# 2. Database Creation Logic
-def setup_database():
+
+
+def ingest_movies(movies):
+    """
+    movies: list of dicts
+    Example:
+    {
+        "title": "Avatar",
+        "tags": "action adventure fantasy",
+        "embedding": [0.12, 0.45, ...]
+    }
+    """
     try:
-        logger.info("Setting up database connection")
+        db = get_db_connection()
+        cursor = db.cursor()
 
-        # Initial connection without a database name
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        db_name = os.getenv("DB_NAME")
-        logger.info(f"Using database: {db_name}")
-        
-        # Create database if it doesn't exist
-        cursor.execute(f"CREATE DATABASE IF NOT EXISTS {db_name}")
-        cursor.execute(f"USE {db_name}")
-        
-        # Create table if it doesn't exist
-        create_table_query = """
-        CREATE TABLE IF NOT EXISTS movies (
-            id INT PRIMARY KEY,
-            title VARCHAR(255),
-            tags TEXT,
-            embedding JSON
-        )
+        sql = """
+            INSERT INTO movies (title, tags, embedding)
+            VALUES (%s, %s, %s)
         """
-        cursor.execute(create_table_query)
-        logger.info("Movies table is ready")
 
-        return conn
+        for movie in movies:
+            vector_str = str(list(movie["embedding"]))  # pgvector format
 
-    except Exception as e:
-        logger.exception("Database setup failed")
-        sys.exit(1)
+            cursor.execute(
+                sql,
+                (
+                    movie["title"],
+                    movie["tags"],
+                    vector_str
+                )
+            )
 
+        db.commit()
+        logger.info(f"Ingested {len(movies)} movies")
 
-logger.info("Loading processed data and initializing embedder...")
-df = pd.read_csv(os.path.join(project_root, "data", "processed", "tmdb_processed.csv"))
-logger.info(f"Processed data loaded with shape: {df.shape}")
+        cursor.close()
+        db.close()
 
-
-db = setup_database()
-cursor = db.cursor()
-
-logger.info("Generating vectors and inserting into database...")
-insert_query = """   
-INSERT INTO movies (id,title,tags,embedding)
-VALUES (%s,%s,%s,%s)
-"""
-
-# Limiting to 500 for a local test run. Remove `.head(500)` for the full dataset.
-count = 0
-for _, row in df.head(500).iterrows():
-    try:
-        vector = embeder.encode(row['tags'])
-        vector_str = json.dumps(vector)
-        cursor.execute(insert_query, (row['id'], row['title'], row['tags'], vector_str))
-        count += 1
     except Exception:
-        logger.exception(f"Failed to insert movie id: {row['id']}")
+        logger.exception("Error ingesting movies")
+        raise
 
-db.commit()
-cursor.close()
-db.close()
 
-logger.info(f"Ingestion complete! Inserted {count} records.")
+if __name__ == "__main__":
+    # Example test data
+    sample_movies = [
+        {
+            "title": "Movie A",
+            "tags": "action adventure",
+            "embedding": [0.1] * 384
+        },
+        {
+            "title": "Movie B",
+            "tags": "romance drama",
+            "embedding": [0.2] * 384
+        }
+    ]
+
+    ingest_movies(sample_movies)

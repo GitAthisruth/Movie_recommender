@@ -6,3 +6,4 @@ mysql-connector-python
 streamlit
 pydantic
 python-dotenv
+psycopg2-binary==2.9.9

@@ -1,4 +1,4 @@
-import mysql.connector
+import psycopg2
 import os
 from dotenv import load_dotenv
 from src.logger import get_logger
@@ -6,36 +6,53 @@ from src.logger import get_logger
 load_dotenv()
 logger = get_logger(__name__)
 
+
 def get_db_connection():
     try:
-        conn = mysql.connector.connect(
+        conn = psycopg2.connect(
             host=os.getenv("DB_HOST"),
+            port=os.getenv("DB_PORT", 5432),
             user=os.getenv("DB_USER"),
             password=os.getenv("DB_PASSWORD"),
-            database=os.getenv("DB_NAME")
+            dbname=os.getenv("DB_NAME")
         )
-        logger.info("Database connection successful")
+        logger.info("PostgreSQL connection successful")
         return conn
 
-    except Exception as e:
+    except Exception:
         logger.exception("Database connection failed")
         raise
 
 
 def search_movies(vector_str, limit=5):
+    """
+    vector_str example:
+    "[0.12, 0.45, 0.78, ...]"
+
+    Uses pgvector cosine distance.
+    Smaller distance = more similar.
+    """
     try:
         db = get_db_connection()
-        cursor = db.cursor(dictionary=True)
+        cursor = db.cursor()
 
         sql = """
             SELECT title, tags
             FROM movies
-            ORDER BY VECTOR_DISTANCE(embedding, string_to_vector(%s))
+            ORDER BY embedding <=> %s
             LIMIT %s;
         """
 
         cursor.execute(sql, (vector_str, limit))
-        results = cursor.fetchall()
+        rows = cursor.fetchall()
+
+        # Convert to dictionary format (like MySQL dictionary=True)
+        results = []
+        for row in rows:
+            results.append({
+                "title": row[0],
+                "tags": row[1]
+            })
 
         logger.info(f"Fetched {len(results)} movies")
 
@@ -43,6 +60,6 @@ def search_movies(vector_str, limit=5):
         db.close()
         return results
 
-    except Exception as e:
+    except Exception:
         logger.exception("Error in search_movies")
         raise

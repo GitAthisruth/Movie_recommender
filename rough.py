@@ -16,4 +16,4 @@ df = preprocess.clean_and_merge_data(movies_path, credits_path)
 
 df = pd.read_csv('data/processed/tmdb_processed.csv')
 
-print(df.shape)
+print(df.head())

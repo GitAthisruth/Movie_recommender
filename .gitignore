@@ -33,3 +33,7 @@ __pycache__/
 # Ignores hidden files created by Windows or Mac.
 .DS_Store
 Thumbs.db
+
+# Log files
+logs/
+*.log

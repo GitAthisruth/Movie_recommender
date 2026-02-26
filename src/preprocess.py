@@ -24,10 +24,10 @@ def clean_and_merge_data(movies_path, credits_path):
     movies.dropna(inplace=True)
     
     # Parse strings to lists
-    movies['genres'] = movies['genres'].apply(convert_list)
-    movies['keywords'] = movies['keywords'].apply(convert_list)
+    movies['genres'] = movies['genres'].apply(convert_genres)
+    movies['keywords'] = movies['keywords'].apply(convert_genres)
     movies['cast'] = movies['cast'].apply(convert_cast)
-    movies['crew'] = movies['crew'].apply(fetch_director)
+    movies['crew'] = movies['crew'].apply(fetch_directors)
     
     # Remove spaces for unique tags
     for col in ['genres', 'keywords', 'cast', 'crew']:

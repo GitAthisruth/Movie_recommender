@@ -20,8 +20,10 @@ def clean_and_merge_data(movies_path, credits_path):
     
     
     # Merge and filter
-    movies = movies.merge(credits, on='title')
-    movies = movies[['movie_id', 'title', 'overview', 'genres', 'keywords', 'cast', 'crew']]
+    movies = movies.merge(credits,left_on='id', right_on='movie_id') #Merge on the movie title or ID
+    movies.drop(columns=['movie_id','title_y'], inplace=True)
+    movies.rename(columns={'title_x':'title'}, inplace=True)
+    movies = movies[['id', 'title', 'overview', 'genres', 'keywords', 'cast', 'crew']]
     movies.dropna(inplace=True)
     
     # Parse strings to lists
@@ -39,7 +41,7 @@ def clean_and_merge_data(movies_path, credits_path):
     # Create final tags
     movies['tags'] = movies['overview'] + movies['genres'] + movies['keywords'] + movies['cast'] + movies['crew']
     
-    new_df = movies[['movie_id', 'title', 'tags']].copy()
+    new_df = movies[['id', 'title', 'tags']].copy()
     new_df['tags'] = new_df['tags'].apply(lambda x: " ".join(x).lower())
     
     return new_df

@@ -5,7 +5,7 @@ import os
 from dotenv import load_dotenv
 from src.embedder import MovieEmbedder
 
-load_dotenv()
+load_dotenv()# This looks for a .env file and loads the variables
 
 embeder = MovieEmbedder()
 

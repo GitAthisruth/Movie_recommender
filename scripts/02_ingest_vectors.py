@@ -1,5 +1,6 @@
 import os
 import sys
+from backend.
 
 # 1. Get the directory of the current script (scripts/)
 current_script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -13,9 +14,9 @@ if project_root not in sys.path:
 
 
 import pandas as pd
-import mysql.connector
 import json
 from dotenv import load_dotenv
+from backend.database import get_db_connection
 
 # Logger import (from src/__init__.py)
 from src import get_logger
@@ -33,11 +34,7 @@ def setup_database():
         logger.info("Setting up database connection")
 
         # Initial connection without a database name
-        conn = mysql.connector.connect(
-            host=os.getenv("DB_HOST"),
-            user=os.getenv("DB_USER"),
-            password=os.getenv("DB_PASSWORD")
-        )
+        conn = get_db_connection()
         cursor = conn.cursor()
         
         db_name = os.getenv("DB_NAME")

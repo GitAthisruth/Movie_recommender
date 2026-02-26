@@ -5,7 +5,6 @@ current_script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # 2. Get the parent directory (the Project Root)
 project_root = os.path.dirname(current_script_dir)
-print(project_root)
 # 3. Add the project root to sys.path so Python can see 'src'
 if project_root not in sys.path:
     sys.path.append(project_root)

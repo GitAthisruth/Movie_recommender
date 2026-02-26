@@ -1,7 +1,7 @@
 pandas
 fastapi
 uvicorn
-sentence-transformer
+sentence-transformers
 mysql-connector-python
 streamlit
 pydantic

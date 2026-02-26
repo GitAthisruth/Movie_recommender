@@ -2,7 +2,7 @@ from sentence_transformers import SentenceTransformer
 import os
 
 class MovieEmbedder:
-    def __init__(self,model_name='all_MiniLM-L6-v2',save_path="./models/all-MiniLM-L6-v2"):
+    def __init__(self,model_name='all-MiniLM-L6-v2',save_path="./models/all-MiniLM-L6-v2"):
         self.save_path = save_path
 
         if os.path.exists(self.save_path):

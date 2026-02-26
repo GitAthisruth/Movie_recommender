@@ -1,1 +1,8 @@
 pandas
+fastapi
+uvicorn
+sentence-transformer
+mysql-connector-python
+streamlit
+pydantic
+python-dotenv

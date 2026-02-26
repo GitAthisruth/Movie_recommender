@@ -18,6 +18,7 @@ def clean_and_merge_data(movies_path, credits_path):
     movies = pd.read_csv(movies_path)
     credits = pd.read_csv(credits_path)
     
+    
     # Merge and filter
     movies = movies.merge(credits, on='title')
     movies = movies[['movie_id', 'title', 'overview', 'genres', 'keywords', 'cast', 'crew']]

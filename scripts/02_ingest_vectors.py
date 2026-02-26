@@ -63,8 +63,8 @@ cursor = db.cursor()
 
 print("Generating vectors and inserting into database...")
 insert_query = """   
-INSERT INTO movies (movie_id,title,tags,embedding)
-VALUES (%s,%s,%s,string_to_vectors(%s))
+INSERT INTO movies (id,title,tags,embedding)
+VALUES (%s,%s,%s,%s)
 """
 
 # Limiting to 500 for a local test run. Remove `.head(500)` for the full dataset.

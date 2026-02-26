@@ -7,6 +7,36 @@ load_dotenv()
 logger = get_logger(__name__)
 
 
+
+def setup_database(cursor):
+    """
+    Creates pgvector extension and movies table if not exists
+    """
+    try:
+        # 1. Enable pgvector
+        cursor.execute("""
+            CREATE EXTENSION IF NOT EXISTS vector;
+        """)
+
+        # 2. Create movies table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS movies (
+                id SERIAL PRIMARY KEY,
+                title TEXT,
+                tags TEXT,
+                embedding vector(384)
+            );
+        """)
+
+        logger.info("Database setup completed (extension + table ready)")
+
+    except Exception:
+        logger.exception("Error during database setup")
+        raise
+
+
+
+
 def get_db_connection():
     try:
         conn = psycopg2.connect(

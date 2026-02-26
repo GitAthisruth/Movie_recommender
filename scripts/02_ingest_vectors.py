@@ -2,15 +2,17 @@ import psycopg2
 import os
 import json
 from dotenv import load_dotenv
-from src.logger import get_logger
-from backend.database import get_db_connection
+import sys
 
 load_dotenv()
+
+
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from src.logger import get_logger
+from backend.database import get_db_connection , setup_database
+
 logger = get_logger(__name__)
-
-
-
-
 
 def ingest_movies(movies):
     """
@@ -25,6 +27,7 @@ def ingest_movies(movies):
     try:
         db = get_db_connection()
         cursor = db.cursor()
+        setup_database(cursor)
 
         sql = """
             INSERT INTO movies (title, tags, embedding)

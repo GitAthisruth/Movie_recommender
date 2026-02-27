@@ -1,6 +1,4 @@
-import psycopg2
 import os
-import json
 from dotenv import load_dotenv
 import sys
 
@@ -11,20 +9,31 @@ load_dotenv()
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from src.logger import get_logger
 from backend.database import get_db_connection , setup_database
+from src.embedder import MovieEmbedder
 
 logger = get_logger(__name__)
 
-def ingest_movies(movies):
-    """
-    movies: list of dicts
-    Example:
-    {
-        "title": "Avatar",
-        "tags": "action adventure fantasy",
-        "embedding": [0.12, 0.45, ...]
-    }
-    """
+def ingest_movies(movies_df):
+
     try:
+        logger.info("Starting movie ingestion")
+
+        # Initialize embedder
+        embedder = MovieEmbedder()
+
+        # Convert dataframe to records
+        movies = movies_df.to_dict(orient="records")
+
+        # Extract tags for batch embedding (faster)
+        tags_list = [movie["tags"] for movie in movies]
+
+        logger.info("Generating embeddings...")
+        embeddings = embedder.encode(tags_list)
+
+        # Add embeddings back to records
+        for movie, emb in zip(movies, embeddings):
+            movie["embedding"] = emb
+
         db = get_db_connection()
         cursor = db.cursor()
         setup_database(cursor)
@@ -56,20 +65,3 @@ def ingest_movies(movies):
         logger.exception("Error ingesting movies")
         raise
 
-
-if __name__ == "__main__":
-    # Example test data
-    sample_movies = [
-        {
-            "title": "Movie A",
-            "tags": "action adventure",
-            "embedding": [0.1] * 384
-        },
-        {
-            "title": "Movie B",
-            "tags": "romance drama",
-            "embedding": [0.2] * 384
-        }
-    ]
-
-    ingest_movies(sample_movies)

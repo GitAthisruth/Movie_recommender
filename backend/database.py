@@ -7,36 +7,6 @@ load_dotenv()
 logger = get_logger(__name__)
 
 
-
-def setup_database(cursor):
-    """
-    Creates pgvector extension and movies table if not exists
-    """
-    try:
-        # 1. Enable pgvector
-        cursor.execute("""
-            CREATE EXTENSION IF NOT EXISTS vector;
-        """)
-
-        # 2. Create movies table
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS movies (
-                id SERIAL PRIMARY KEY,
-                title TEXT,
-                tags TEXT,
-                embedding vector(384)
-            );
-        """)
-
-        logger.info("Database setup completed (extension + table ready)")
-
-    except Exception:
-        logger.exception("Error during database setup")
-        raise
-
-
-
-
 def get_db_connection():
     try:
         conn = psycopg2.connect(
@@ -54,6 +24,35 @@ def get_db_connection():
         raise
 
 
+def setup_database(cursor):
+    """
+    Create pgvector extension and movies table if not exists
+    """
+    try:
+        
+
+        # Enable pgvector extension
+        cursor.execute("""
+            CREATE EXTENSION IF NOT EXISTS vector;
+        """)
+
+        # Create movies table
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS movies (
+                id SERIAL PRIMARY KEY,
+                title TEXT,
+                tags TEXT,
+                embedding vector(384)
+            );
+        """)
+
+        logger.info("Database setup completed (extension + table ready)")
+
+    except Exception:
+        logger.exception("Error during database setup")
+        raise
+
+
 def search_movies(vector_str, limit=5):
     """
     vector_str example:
@@ -63,6 +62,14 @@ def search_movies(vector_str, limit=5):
     Smaller distance = more similar.
     """
     try:
+
+        db = get_db_connection()
+        cursor = db.cursor()
+
+        setup_database(cursor)
+       
+        setup_database()
+
         db = get_db_connection()
         cursor = db.cursor()
 
@@ -76,7 +83,6 @@ def search_movies(vector_str, limit=5):
         cursor.execute(sql, (vector_str, limit))
         rows = cursor.fetchall()
 
-        # Convert to dictionary format (like MySQL dictionary=True)
         results = []
         for row in rows:
             results.append({
@@ -88,6 +94,7 @@ def search_movies(vector_str, limit=5):
 
         cursor.close()
         db.close()
+
         return results
 
     except Exception:

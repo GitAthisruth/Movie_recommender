@@ -67,11 +67,6 @@ def search_movies(vector_str, limit=5):
         cursor = db.cursor()
 
         setup_database(cursor)
-       
-        setup_database()
-
-        db = get_db_connection()
-        cursor = db.cursor()
 
         sql = """
             SELECT title, tags

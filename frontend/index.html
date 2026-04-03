@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamNet - Movie Recommender</title>
+    <meta name="description" content="AI-powered movie recommendations in a sleek interface.">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="hero-bg"></div>
+    <div class="vignette"></div>
+
+    <header class="app-header">
+        <div class="logo">STREAMNET</div>
+        <div class="header-right">
+            <select class="lang-select">
+                <option>English</option>
+            </select>
+            <button class="sign-in-btn">Sign In</button>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <div class="hero-text" id="hero-text">
+            <h1>Unlimited movies, shows, and more</h1>
+            <h2>Powered by AI. Discover exactly what you're in the mood for.</h2>
+            <p>Ready to watch? Enter a genre, plot, or feeling to get recommendations.</p>
+        </div>
+
+        <form id="search-form" class="search-form">
+            <div class="input-group">
+                <input type="text" id="search-input" placeholder="e.g., A funny sci-fi about time travel" required />
+                <button type="submit" id="search-btn">
+                    Get Started
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="chevron-icon">
+                        <path d="M9 18L15 12L9 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+        </form>
+
+        <div id="loading" class="hidden">
+            <div class="spinner"></div>
+            <span>Finding the perfect movies...</span>
+        </div>
+
+        <div id="results-container" class="hidden">
+            <h3 class="results-title">Top Recommendations</h3>
+            <div id="results-grid" class="results-grid">
+                <!-- Movie cards will be injected here -->
+            </div>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

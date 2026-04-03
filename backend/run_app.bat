@@ -1,0 +1,3 @@
+@echo off
+echo Starting up StreamNet Movie Recommender...
+.\env\Scripts\python.exe -m uvicorn backend.main:app --port 8000

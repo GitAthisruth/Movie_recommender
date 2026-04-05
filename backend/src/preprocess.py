@@ -53,8 +53,10 @@ def clean_and_merge_data(movies_path, credits_path):
 
         # Select required columns
         movies = movies[['id', 'title', 'overview', 'genres', 'keywords', 'cast', 'crew']]
+        logger.info("removing duplicates")
+        movies.drop_duplicates(subset="title", keep="first",inplace=True)
         logger.debug(f"Shape after column selection: {movies.shape}")
-
+        
         # Drop missing values
         before_drop = movies.shape[0]
         movies.dropna(inplace=True)

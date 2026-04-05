@@ -40,6 +40,7 @@ def ingest_movies(movies_df):
         sql = """
             INSERT INTO movies (title, tags, embedding)
             VALUES (%s, %s, %s)
+            ON CONFLICT (title) DO NOTHING
         """
 
         for movie in movies:

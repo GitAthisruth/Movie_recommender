@@ -41,7 +41,7 @@ def setup_database(cursor):
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS movies (
                 id SERIAL PRIMARY KEY,
-                title TEXT,
+                title TEXT UNIQUE,
                 tags TEXT,
                 embedding vector(384)
             );
@@ -70,9 +70,9 @@ def search_movies(vector_str, limit=5):
         setup_database(cursor)
 
         sql = """
-            SELECT title, tags
+            SELECT DISTINCT ON (title) title, tags
             FROM movies
-            ORDER BY embedding <=> %s
+            ORDER BY title, embedding <=> %s
             LIMIT %s;
         """
 

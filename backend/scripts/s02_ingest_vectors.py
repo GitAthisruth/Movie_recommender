@@ -6,9 +6,9 @@ load_dotenv()
 
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-from src.logger import get_logger
-from database import get_db_connection , setup_database
-from src.embedder import MovieEmbedder
+from backend.src.logger import get_logger
+from backend.database import get_db_connection , setup_database
+from backend.src.embedder import MovieEmbedder
 
 logger = get_logger(__name__)
 

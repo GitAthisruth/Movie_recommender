@@ -1,7 +1,7 @@
 import pandas as pd
 import ast
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-from src.logger import get_logger
+from backend.src.logger import get_logger
 
 logger = get_logger(__name__)
 

@@ -1,8 +1,8 @@
 import os
 import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
-from src.logger import get_logger
-from src.preprocess import clean_and_merge_data
+from backend.src.logger import get_logger
+from backend.src.preprocess import clean_and_merge_data
 
 logger = get_logger(__name__)
 
